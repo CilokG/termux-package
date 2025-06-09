@@ -28,7 +28,7 @@ if [[ "$arch" != "aarch64" && "$arch" != "arm" ]]; then
 	exit 1
 fi
 
-if [[ ! -d $PATH/fastboot ]] || [[ ! -d $PATH/adb ]]; then
+if [[ ! -f $PATH/fastboot ]] || [[ ! -f $PATH/adb ]]; then
 	dots=""
 	echo -ne "📦 Installing required package"
 	(pkg update && pkg install termux-exec && pkg install git -y) > /dev/null 2>&1 & INSTALL_PID=$!
