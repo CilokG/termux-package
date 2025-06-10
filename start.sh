@@ -42,7 +42,7 @@ if [ ! -f "$PREFIX/etc/apt/sources.list.d/termux-adb.list" ]; then
 		esac
 
 		echo -ne "\r📦 Installing required package$dots\033[K"
-		sleep 0.4
+		sleep 0.4 > /dev/null 2>&1
 	done
 
 	wait $INSTALL_PID
