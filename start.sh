@@ -40,6 +40,6 @@ wait $INSTALL_PID
 curl -sSL https://raw.githubusercontent.com/CilokG/termux-package/master/main.c | clang -x c -o $PREFIX/bin/flasher -
 echo -ne "\r✅ Required package installed!\033[K\n"
 
-mv $PATH/termux-fastboot $PATH/fastboot
-mv $PATH/termux-adb $PATH/adb
+mv $PREFIX/bin/termux-fastboot $PREFIX/bin/fastboot > /dev/null 2>&1
+mv $PREFIX/bin/termux-adb $PREFIX/bin/adb > /dev/null 2>&1
 sleep 1.25 
