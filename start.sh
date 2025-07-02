@@ -1,5 +1,4 @@
-clear
-echo -e "\033[1;32m"
+#!/bin/bash
 
 case $(dpkg --print-architecture) in
 	aarch64|arm) ;;
@@ -7,7 +6,7 @@ case $(dpkg --print-architecture) in
 esac
 
 if dpkg -l | grep -q android-tools; then
-	pkg uninstall -y android-tools > /dev/null 2>&1
+	pkg uninstall -y android-tools -qq
 fi
 
 if [ ! -d "$HOME/storage" ]; then
@@ -20,26 +19,46 @@ if [ ! -d "/data/data/com.termux.api" ]; then
 	exit 1
 fi
 
-dots=""
-echo -ne "📦 Installing required package"
-(curl -sS https://raw.githubusercontent.com/CilokG/termux-package/master/setup.sh | bash) & INSTALL_PID=$!
+cd "$PREFIX/bin/"
+echo -e "\n📦 Installing required package\n   This may take a while\n"
 
-while kill -0 $INSTALL_PID 2>/dev/null; do
-	case "$dots" in
-		"") dots="." ;;
-		".") dots=".." ;;
-		"..") dots="..." ;;
-		"...") dots="" ;;
-	esac
+TOTAL=13
+COUNT=0
+BAR_LENGTH=20
 
-	echo -ne "\r📦 Installing required package$dots\033[K"
-	sleep 0.4 > /dev/null 2>&1
-done
+SHOW_PROGRESS() {
+  percent=$((COUNT * 100 / TOTAL))
+  filled=$((COUNT * BAR_LENGTH / TOTAL))
+  empty=$((BAR_LENGTH - filled))
 
-wait $INSTALL_PID
-curl -sSL https://raw.githubusercontent.com/CilokG/termux-package/master/main.c | clang -x c -o $PREFIX/bin/flasher -
-echo -ne "\r✅ Required package installed!\033[K\n"
+  bar=$(printf "%0.s█" $(seq 1 $filled))
+  bar+=$(printf "%0.s░" $(seq 1 $empty))
 
-mv $PREFIX/bin/termux-fastboot $PREFIX/bin/fastboot > /dev/null 2>&1
-mv $PREFIX/bin/termux-adb $PREFIX/bin/adb > /dev/null 2>&1
-sleep 1.25 
+  echo -ne "[${bar}] ($COUNT/$TOTAL) ${percent}%\r"
+}
+
+NEXT_STEP() {
+  COUNT=$((COUNT + 1))
+  SHOW_PROGRESS
+  sleep 0.2
+}
+
+apt-get update -qq && NEXT_STEP
+apt-get --assume-yes upgrade -qq && NEXT_STEP
+apt-get --assume-yes install coreutils -qq && NEXT_STEP
+apt-get --assume-yes install gnupg -qq && NEXT_STEP
+apt-get --assume-yes install wget -qq && NEXT_STEP
+apt-get --assume-yes install clang -qq && NEXT_STEP
+apt-get --assume-yes install termux-api -qq && NEXT_STEP
+
+mkdir -p $PREFIX/etc/apt/sources.list.d && NEXT_STEP
+echo "deb https://nohajc.github.io termux extras" > $PREFIX/etc/apt/sources.list.d/termux-adb.list && NEXT_STEP
+wget -qP $PREFIX/etc/apt/trusted.gpg.d https://nohajc.github.io/nohajc.gpg && NEXT_STEP
+apt-get update -qq && NEXT_STEP
+apt-get --assume-yes install termux-adb -qq && NEXT_STEP
+
+curl -sSL https://raw.githubusercontent.com/CilokG/termux-package/master/main.c | clang -x c -o flasher - && NEXT_STEP
+ln -sf termux-fastboot fastboot && ln -sf termux-adb adb
+
+echo ""
+echo -e "\n✅ Required package installed\n   Usage Command: \033[1;32mflasher\033[0m\n"
