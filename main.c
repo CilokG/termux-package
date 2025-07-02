@@ -11,16 +11,12 @@
 #define MAX_FILES 100
 #define MAX_PATH_LEN 1024
 
-void clear_screen() {
-    system("clear");
-}
-
 void print_green(const char *message) {
     printf("%s%s%s", COLOR_GREEN, message, COLOR_RESET);
 }
 
 void print_menu() {
-    clear_screen();
+    //clear_screen();
     print_green("");
     
     printf("[Information]\n");
