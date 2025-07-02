@@ -122,7 +122,7 @@ void wait_for_sideload() {
 }
 
 void flash_fastboot_rom() {
-    printf("[GUIDE]\n");
+    printf("\n[GUIDE]\n");
     printf("   Type the command to go to your ROM folder\n");
     printf("   (example: cd /sdcard/ROM/)\n");
     printf("-> ");
@@ -208,7 +208,7 @@ void flash_fastboot_rom() {
 }
 
 void sideload_rom() {
-    printf("[GUIDE]\n");
+    printf("\n[GUIDE]\n");
     printf("   Type the command to go to your files folder\n");
     printf("   (example: cd /sdcard/FILES/)\n");
     printf("-> ");
@@ -312,7 +312,6 @@ int main() {
                 return 0;
             case 3:
                 printf("Coming soon!\n");
-                sleep(2);
                 return 0;
             default:
                 return 0;
