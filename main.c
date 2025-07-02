@@ -306,14 +306,14 @@ int main() {
         switch (option) {
             case 1:
                 flash_fastboot_rom();
-                break;
+                break; return 0;
             case 2:
                 sideload_rom();
-                break;
+                break; return 0;
             case 3:
                 printf("Coming soon!\n");
                 sleep(2);
-                break;
+                break; return 0;
             default:
                 return 0;
         }
